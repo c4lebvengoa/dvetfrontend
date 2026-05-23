@@ -1,4 +1,4 @@
-export default Component1=()=>{
+export const Component=()=>{
     return(
         <>
          <h2>Pechocha MIAAAA</h2>
