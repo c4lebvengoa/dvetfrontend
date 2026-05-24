@@ -12,8 +12,9 @@ export default function App() {
         <BrowserRouter>
             <nav className="bg-slate-900 shadow-xl px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="text-white font-black text-xl tracking-wider">
-                    🐾 D'Pocas Pulgas <span className="text-indigo-400 font-normal text-sm">ERP</span>
+                    🐾 D'Pocas Pulgas 
                 </div>
+                <p className='text-white font-bold'>PECHOCHA MIA</p>
                 <ul className="flex flex-wrap justify-center gap-6 text-sm">
                     <li><Link to="/personal" className="text-slate-300 hover:text-white font-semibold transition">Personal</Link></li>
                     <li><Link to="/usuarios" className="text-slate-300 hover:text-white font-semibold transition">Usuarios</Link></li>
