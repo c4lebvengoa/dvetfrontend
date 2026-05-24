@@ -1,5 +1,11 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext, AuthProvider } from './context/AuthContext';
+import {Navbar} from './components/Navbar';
+
+// Páginas
+import Login from './pages/Login';
+import {Home} from './pages/Home';
 import PersonalCrud from './pages/PersonalCrud';
 import NuevaVenta from './pages/NuevaVenta';
 import UsuariosCrud from './pages/UsuariosCrud';
@@ -7,34 +13,47 @@ import SpaCrud from './pages/SpaCrud';
 import MovilidadCrud from './pages/MovilidadCrud';
 import InternamientosCrud from './pages/InternamientosCrud';
 
+// Ruta Protegida Interna
+const ProtectedLayout = ({ children }) => {
+    const { token } = useContext(AuthContext);
+    
+    // Si no hay token, lo expulsa directamente al Login
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // Si hay sesión activa, muestra la barra de navegación y el contenido de la página
+    return (
+        <>
+            <Navbar />
+            <div className="bg-slate-50 min-h-screen">
+                {children}
+            </div>
+        </>
+    );
+};
+
 export default function App() {
     return (
-        <BrowserRouter>
-            <nav className="bg-slate-900 shadow-xl px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="text-white font-black text-xl tracking-wider">
-                    🐾 D'Pocas Pulgas 
-                </div>
-                <p className='text-white font-bold'>PECHOCHA MIA</p>
-                <ul className="flex flex-wrap justify-center gap-6 text-sm">
-                    <li><Link to="/personal" className="text-slate-300 hover:text-white font-semibold transition">Personal</Link></li>
-                    <li><Link to="/usuarios" className="text-slate-300 hover:text-white font-semibold transition">Usuarios</Link></li>
-                    <li><Link to="/ventas" className="text-slate-300 hover:text-white font-semibold transition">Punto de Venta</Link></li>
-                    <li><Link to="/spa" className="text-slate-300 hover:text-white font-semibold transition">Spa</Link></li>
-                    <li><Link to="/movilidad" className="text-slate-300 hover:text-white font-semibold transition">Movilidad</Link></li>
-                    <li><Link to="/internamientos" className="text-slate-300 hover:text-white font-semibold transition">Internamientos</Link></li>
-                </ul>
-            </nav>
-
-            <div className="bg-slate-50 min-h-screen">
+        <AuthProvider>
+            <BrowserRouter>
                 <Routes>
-                    <Route path="/personal" element={<PersonalCrud />} />
-                    <Route path="/usuarios" element={<UsuariosCrud />} />
-                    <Route path="/ventas" element={<NuevaVenta />} />
-                    <Route path="/spa" element={<SpaCrud />} />
-                    <Route path="/movilidad" element={<MovilidadCrud />} />
-                    <Route path="/internamientos" element={<InternamientosCrud />} />
+                    {/* Ruta Pública */}
+                    <Route path="/login" element={<Login />} />
+
+                    {/* Rutas Privadas Protegidas por Token */}
+                    <Route path="/home" element={<ProtectedLayout><Home /></ProtectedLayout>} />
+                    <Route path="/personal" element={<ProtectedLayout><PersonalCrud /></ProtectedLayout>} />
+                    <Route path="/usuarios" element={<ProtectedLayout><UsuariosCrud /></ProtectedLayout>} />
+                    <Route path="/ventas" element={<ProtectedLayout><NuevaVenta /></ProtectedLayout>} />
+                    <Route path="/spa" element={<ProtectedLayout><SpaCrud /></ProtectedLayout>} />
+                    <Route path="/movilidad" element={<ProtectedLayout><MovilidadCrud /></ProtectedLayout>} />
+                    <Route path="/internamientos" element={<ProtectedLayout><InternamientosCrud /></ProtectedLayout>} />
+
+                    {/* Redirección por defecto */}
+                    <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
-            </div>
-        </BrowserRouter>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
